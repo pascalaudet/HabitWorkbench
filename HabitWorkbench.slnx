@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="HabitWorkbench/HabitWorkbench.csproj" />
+  <Project Path="HabitWorkbench/HabitWorkbench.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
 </Solution>

@@ -1,0 +1,119 @@
+﻿@page "/routines/{RoutineId:int}"
+@using HabitWorkbench.Data.Models
+@inject HabitWorkbench.Data.AppDb Db
+
+<h1>@(routine?.Name ?? "Routine")</h1>
+
+@if (routine is null)
+{
+    <p>Loading…</p>
+}
+else
+{
+    <h3>Habits</h3>
+
+    <div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:12px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+            <label>Name</label>
+            <input @bind="newHabitName" maxlength="80" style="min-width:320px;" />
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+            <label>Order</label>
+            <input type="number" step="0.01" @bind="newHabitOrder" style="width:120px;" />
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+            <label>Good</label>
+            <input type="checkbox" @bind="newHabitGood" />
+        </div>
+
+        <button @onclick="AddHabit">Add</button>
+    </div>
+
+    @if (habits.Count == 0)
+    {
+        <p>No habits yet.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width:120px;">Order</th>
+                    <th>Name</th>
+                    <th style="width:120px;">Good</th>
+                    <th style="width:220px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var h in habits)
+                {
+                    <tr>
+                        <td>@h.OrderInRoutine</td>
+                        <td>@h.Name</td>
+                        <td>@(h.Good ? "Yes" : "No")</td>
+                        <td>
+                            <button @onclick="() => DeleteHabit(h)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter] public int RoutineId { get; set; }
+
+    private Routine? routine;
+    private List<Habit> habits = new();
+
+    private string newHabitName = "";
+    private decimal newHabitOrder = 10m;
+    private bool newHabitGood = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Db.InitAsync();
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        routine = await Db.Conn.FindAsync<Routine>(RoutineId);
+
+        habits = await Db.Conn.Table<Habit>()
+            .Where(h => h.RoutineId == RoutineId)
+            .OrderBy(h => h.OrderInRoutine)
+            .ToListAsync();
+    }
+
+    private async Task AddHabit()
+    {
+        var name = (newHabitName ?? "").Trim();
+        if (name.Length == 0) return;
+
+        var habit = new Habit
+        {
+            RoutineId = RoutineId,
+            Name = name.Length > 80 ? name.Substring(0, 80) : name,
+            OrderInRoutine = newHabitOrder,
+            Good = newHabitGood
+        };
+
+        await Db.Conn.InsertAsync(habit);
+
+        newHabitName = "";
+        newHabitOrder += 10m;
+        newHabitGood = true;
+
+        await Load();
+    }
+
+    private async Task DeleteHabit(Habit h)
+    {
+        await Db.Conn.DeleteAsync(h);
+        await Load();
+    }
+}

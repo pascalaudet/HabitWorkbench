@@ -1,0 +1,148 @@
+﻿@page "/routines"
+@using HabitWorkbench.Data.Models
+@inject HabitWorkbench.Data.AppDb Db
+
+<h1>Routines</h1>
+
+<div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:12px;">
+    <div style="display:flex; flex-direction:column; gap:6px;">
+        <label>Name</label>
+        <input @bind="newRoutineName" maxlength="80" style="min-width:320px;" />
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:6px;">
+        <label>Order</label>
+        <input type="number" step="0.01" @bind="newRoutineOrder" style="width:120px;" />
+    </div>
+
+    <button @onclick="AddRoutine">Add</button>
+</div>
+
+@if (routines is null)
+{
+    <p>Loading…</p>
+}
+else if (routines.Count == 0)
+{
+    <p>No routines yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width:120px;">Order</th>
+                <th>Name</th>
+                <th style="width:260px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in routines)
+            {
+                <tr>
+                    <td>@r.Order</td>
+
+                    @if (editId == r.Id)
+                    {
+                        <td>
+                            <input @bind="editName" maxlength="80" style="width:100%;" />
+                        </td>
+                        <td>
+                            <button @onclick="SaveEdit">Save</button>
+                            <button @onclick="CancelEdit">Cancel</button>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <NavLink href="@($"/routines/{r.Id}")">@r.Name</NavLink>
+                        </td>
+
+                        <td>
+                            <button @onclick="() => StartEdit(r)">Edit</button>
+                            <button @onclick="() => DeleteRoutine(r)">Delete</button>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Routine>? routines;
+
+    private string newRoutineName = "";
+    private decimal newRoutineOrder = 10m;
+
+    private int? editId = null;
+    private string editName = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Layout already calls Db.InitAsync(), but calling it again is safe and keeps this page robust.
+        await Db.InitAsync();
+        await Reload();
+    }
+
+    private async Task Reload()
+    {
+        routines = await Db.Conn.Table<Routine>()
+            .OrderBy(r => r.Order)
+            .ToListAsync();
+    }
+
+    private async Task AddRoutine()
+    {
+        var name = (newRoutineName ?? "").Trim();
+        if (name.Length == 0) return;
+
+        var routine = new Routine
+        {
+            Name = name.Length > 80 ? name.Substring(0, 80) : name,
+            Order = newRoutineOrder
+        };
+
+        await Db.Conn.InsertAsync(routine);
+
+        newRoutineName = "";
+        newRoutineOrder += 10m; // simple “next order” convenience
+        await Reload();
+    }
+
+    private void StartEdit(Routine r)
+    {
+        editId = r.Id;
+        editName = r.Name;
+    }
+
+    private async Task SaveEdit()
+    {
+        if (editId is null) return;
+
+        var name = (editName ?? "").Trim();
+        if (name.Length == 0) return;
+
+        var routine = await Db.Conn.FindAsync<Routine>(editId.Value);
+        if (routine is null) { CancelEdit(); return; }
+
+        routine.Name = name.Length > 80 ? name.Substring(0, 80) : name;
+        await Db.Conn.UpdateAsync(routine);
+
+        CancelEdit();
+        await Reload();
+    }
+
+    private void CancelEdit()
+    {
+        editId = null;
+        editName = "";
+    }
+
+    private async Task DeleteRoutine(Routine r)
+    {
+        // v0 behavior: allow delete even if habits exist (we’ll add a guard later if you want)
+        await Db.Conn.DeleteAsync(r);
+        await Reload();
+    }
+}
