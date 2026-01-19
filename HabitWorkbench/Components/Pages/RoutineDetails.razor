@@ -51,7 +51,10 @@ else
                 {
                     <tr>
                         <td>@h.OrderInRoutine</td>
-                        <td>@h.Name</td>
+                        <td>
+                            <NavLink href="@($"/habits/{h.Id}")">@h.Name</NavLink>
+                        </td>
+
                         <td>@(h.Good ? "Yes" : "No")</td>
                         <td>
                             <button @onclick="() => DeleteHabit(h)">Delete</button>
