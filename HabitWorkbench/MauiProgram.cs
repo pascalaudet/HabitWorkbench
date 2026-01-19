@@ -21,6 +21,9 @@ namespace HabitWorkbench
     		builder.Logging.AddDebug();
 #endif
 
+            builder.Services.AddSingleton<HabitWorkbench.Data.AppDb>();
+
+
             return builder.Build();
         }
     }
