@@ -12,24 +12,42 @@ else
 {
     <h3>Habits</h3>
 
-    <div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:12px;">
-        <div style="display:flex; flex-direction:column; gap:6px;">
+    <!-- ADD HABIT ROW -->
+    <div class="habit-add-row">
+
+        <div class="habit-field name">
             <label>Name</label>
-            <input @bind="newHabitName" maxlength="80" style="min-width:320px;" />
+            <input @bind="newHabitName" maxlength="80" />
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:6px;">
+        <div class="habit-field order">
             <label>Order</label>
-            <input type="number" step="0.01" @bind="newHabitOrder" style="width:120px;" />
+            <input type="number" step="0.01" @bind="newHabitOrder" />
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:6px;">
+        <div class="habit-field good">
             <label>Good</label>
-            <input type="checkbox" @bind="newHabitGood" />
+            <div class="checkbox-wrap">
+                <input type="checkbox" @bind="newHabitGood" class="habit-checkbox" />
+            </div>
         </div>
 
-        <button @onclick="AddHabit">Add</button>
+        <div class="habit-field status">
+            <label>Status</label>
+            <select @bind="newState">
+                <option value="@HabitImplementationState.Active">Active</option>
+                <option value="@HabitImplementationState.Desired">Desired</option>
+                <option value="@HabitImplementationState.Archived">Archived</option>
+            </select>
+        </div>
+
+        <div class="habit-field add">
+            <button class="btn btn-primary" @onclick="AddHabit">Add</button>
+        </div>
+
     </div>
+
+    <hr class="habit-divider" />
 
     @if (habits.Count == 0)
     {
@@ -37,37 +55,51 @@ else
     }
     else
     {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th style="width:120px;">Order</th>
-                    <th>Name</th>
-                    <th style="width:120px;">Good</th>
-                    <th style="width:220px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var h in habits)
-                {
-                    <tr>
-                        <td>@h.OrderInRoutine</td>
-                        <td>
-                            <NavLink href="@($"/habits/{h.Id}")">@h.Name</NavLink>
-                        </td>
+        @foreach (var s in _sections)
+        {
+            var items = habits.Where(h => h.ImplementationState == s).ToList();
+            if (items.Count == 0) continue;
 
-                        <td>@(h.Good ? "Yes" : "No")</td>
-                        <td>
-                            <button @onclick="() => DeleteHabit(h)">Delete</button>
-                        </td>
+            <h4 style="margin-top:18px;">@s</h4>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width:120px;">Order</th>
+                        <th>Name</th>
+                        <th style="width:120px;">Good</th>
+                        <th style="width:220px;">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var h in items)
+                    {
+                        <tr>
+                            <td>@h.OrderInRoutine</td>
+                            <td>
+                                <NavLink href="@($"/habits/{h.Id}")">@h.Name</NavLink>
+                            </td>
+                            <td>@(h.Good ? "Yes" : "No")</td>
+                            <td>
+                                <button @onclick="() => DeleteHabit(h)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
     }
 }
 
 @code {
     [Parameter] public int RoutineId { get; set; }
+
+    private static readonly HabitImplementationState[] _sections =
+    {
+        HabitImplementationState.Active,
+        HabitImplementationState.Desired,
+        HabitImplementationState.Archived
+    };
 
     private Routine? routine;
     private List<Habit> habits = new();
@@ -75,6 +107,8 @@ else
     private string newHabitName = "";
     private decimal newHabitOrder = 10m;
     private bool newHabitGood = true;
+
+    private HabitImplementationState newState = HabitImplementationState.Active;
 
     protected override async Task OnInitializedAsync()
     {
@@ -102,7 +136,8 @@ else
             RoutineId = RoutineId,
             Name = name.Length > 80 ? name.Substring(0, 80) : name,
             OrderInRoutine = newHabitOrder,
-            Good = newHabitGood
+            Good = newHabitGood,
+            ImplementationState = newState
         };
 
         await Db.Conn.InsertAsync(habit);
@@ -110,6 +145,7 @@ else
         newHabitName = "";
         newHabitOrder += 10m;
         newHabitGood = true;
+        newState = HabitImplementationState.Active;
 
         await Load();
     }

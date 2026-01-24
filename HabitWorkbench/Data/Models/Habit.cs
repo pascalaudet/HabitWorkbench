@@ -2,6 +2,13 @@
 
 namespace HabitWorkbench.Data.Models;
 
+public enum HabitImplementationState
+{
+    Active = 1,
+    Desired = 2,
+    Archived = 3
+}
+
 [Table("habits")]
 public class Habit
 {
@@ -17,6 +24,10 @@ public class Habit
     public decimal OrderInRoutine { get; set; }
 
     public bool Good { get; set; }
+
+    // NEW
+    [NotNull]
+    public HabitImplementationState ImplementationState { get; set; } = HabitImplementationState.Active;
 
     [MaxLength(240)]
     public string? Trigger { get; set; }

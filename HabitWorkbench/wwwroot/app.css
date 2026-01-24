@@ -1,3 +1,152 @@
+/* Habit Add Row */
+.habit-add-row {
+    display: flex;
+    align-items: flex-end; /* bottoms align */
+    gap: 16px;
+}
+
+/* Make all label rows same height so labels align */
+.habit-field {
+    display: flex;
+    flex-direction: column;
+}
+
+    .habit-field label {
+        height: 18px; /* forces same label baseline */
+        line-height: 18px;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Inputs/selects share same height */
+    .habit-field input,
+    .habit-field select {
+        height: 38px;
+        box-sizing: border-box;
+    }
+
+    /* Widths */
+    .habit-field.name input {
+        width: 320px;
+    }
+
+    .habit-field.order input {
+        width: 100px;
+    }
+
+    .habit-field.status select {
+        width: 140px;
+    }
+
+    /* Good column: center or right align (pick one) */
+    .habit-field.good {
+        width: 70px; /* stable column width */
+        align-items: center; /* change to flex-end for right aligned */
+        text-align: center; /* matches align-items */
+    }
+
+/* Keep checkbox vertically aligned to input bottoms */
+.checkbox-wrap {
+    height: 38px; /* exactly the input height */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* change to flex-end for right align */
+}
+
+/* Checkbox (square, bigger, centered) */
+.habit-checkbox {
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+
+/* Divider under add row */
+.habit-divider {
+    margin: 14px 0 18px 0;
+    border: none;
+    height: 2px;
+    background-color: #ccc;
+}
+
+
+/* ===============================
+   2) app.css — base tab row layout + button alignment
+   File: wwwroot/app.css
+   Add at bottom
+   =============================== */
+
+.base-row-2col {
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+    margin-top: 10px;
+}
+
+    .base-row-2col label {
+        display: block;
+        height: 18px;
+        line-height: 18px;
+        margin: 0 0 6px 0;
+        padding: 0;
+    }
+
+.base-good {
+    width: 90px;
+}
+
+.base-good-box {
+    height: 38px;
+    display: flex;
+    align-items: center;
+}
+
+.base-select {
+    height: 38px;
+    box-sizing: border-box;
+    min-width: 140px;
+}
+
+/* Constrain the habit details content so buttons don't fly to the edge */
+.habit-details-wrap {
+    max-width: 900px;
+}
+
+/* Bottom action bar matches content width and stays aligned */
+.habit-actionbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+    .habit-actionbar .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+.app-logo {
+    max-width: 170px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

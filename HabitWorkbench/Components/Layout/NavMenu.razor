@@ -1,8 +1,13 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark" style="background-color:#0b3c6f;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">HabitWorkbench</a>
+        <NavLink href="/" class="navbar-brand px-3">
+            <img src="images/habitworkbench.png"
+                 alt="HabitWorkbench"
+                 class="app-logo" />
+        </NavLink>
     </div>
 </div>
+
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
@@ -26,19 +31,26 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square me-2" aria-hidden="true"></span>
-                Counter
-            </NavLink>
-        </div>
+        <NavLink class="nav-link" href="/#">
+            <span aria-hidden="true">🧭</span> Identity & Values
+        </NavLink>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-cloud-sun me-2" aria-hidden="true"></span>
-                Weather
-            </NavLink>
-        </div>
+        <NavLink class="nav-link" href="/#">
+            <span aria-hidden="true">🧱</span> Systems & Environment
+        </NavLink>
+
+        <NavLink class="nav-link" href="/#">
+            <span aria-hidden="true">📈</span> Habit Scoreboard
+        </NavLink>
+
+        <NavLink class="nav-link" href="/#">
+            <span aria-hidden="true">🗓️</span> Weekly Review
+        </NavLink>
+
+        <NavLink class="nav-link" href="/#">
+            <span aria-hidden="true">🧪</span> Experiments
+        </NavLink>
+
 
     </nav>
 </div>

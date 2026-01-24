@@ -1,0 +1,60 @@
+﻿@using HabitWorkbench.Data.Models
+
+<h3 class="mt-0">Improve</h3>
+
+<div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:12px;">
+    <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+        <label>Idea / Thought (max 800)</label>
+        <input value="@NewText"
+               @oninput="HandleInput"
+               maxlength="800"
+               style="width:100%;" />
+    </div>
+
+    <button class="btn btn-sm btn-secondary" @onclick="OnAdd">Add</button>
+</div>
+
+@if (Items is null || Items.Count == 0)
+{
+    <p>No ideas yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width:220px;">Created</th>
+                <th>Text</th>
+                <th style="width:140px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Items)
+            {
+                <tr>
+                    <td>@c.CreatedOn.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@c.Text</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger"
+                                @onclick="() => OnDelete.InvokeAsync(c)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public List<ContinualImprovement> Items { get; set; } = new();
+
+    [Parameter] public string NewText { get; set; } = "";
+    [Parameter] public EventCallback<string> NewTextChanged { get; set; }
+
+    [Parameter] public EventCallback OnAdd { get; set; }
+    [Parameter] public EventCallback<ContinualImprovement> OnDelete { get; set; }
+
+    private Task HandleInput(ChangeEventArgs e)
+        => NewTextChanged.InvokeAsync(e.Value?.ToString() ?? "");
+}

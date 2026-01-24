@@ -1,0 +1,27 @@
+﻿@using HabitWorkbench.Data.Models
+
+@if (Habit is null)
+{
+    <p>Loading…</p>
+    return;
+}
+
+<h3 class="mt-0">Environment</h3>
+
+<div style="display:flex; flex-direction:column; gap:12px;">
+
+    <div>
+        <label><b>Trigger</b> (max 120)</label><br />
+        <input @bind="Habit.Trigger" maxlength="120" style="width:100%;" />
+    </div>
+
+    <div>
+        <label><b>Environment</b> (max 400)</label><br />
+        <textarea @bind="Habit.Environment" maxlength="400" rows="4" style="width:100%;"></textarea>
+    </div>
+
+</div>
+
+@code {
+    [Parameter] public Habit? Habit { get; set; }
+}

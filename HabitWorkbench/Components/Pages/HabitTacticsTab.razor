@@ -1,0 +1,79 @@
+﻿@using HabitWorkbench.Data.Models
+
+<h3 class="mt-0">Tactics</h3>
+
+<div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:12px;">
+    <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+        <label>Text (max 240)</label>
+        <input value="@NewTacticText"
+               @oninput="HandleTextInput"
+               maxlength="240"
+               style="width:100%;" />
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:6px;">
+        <label>Intent</label>
+        <select value="@NewTacticIntent" @onchange="HandleIntentChange">
+            <option value="@TacticIntent.Improve">Improve</option>
+            <option value="@TacticIntent.Reinforce">Reinforce</option>
+            <option value="@TacticIntent.Reduce">Reduce</option>
+        </select>
+    </div>
+
+    <button class="btn btn-sm btn-secondary" @onclick="OnAdd">Add</button>
+</div>
+
+@if (Tactics is null || Tactics.Count == 0)
+{
+    <p>No tactics yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width:140px;">Intent</th>
+                <th>Text</th>
+                <th style="width:140px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Tactics)
+            {
+                <tr>
+                    <td>@t.Intent</td>
+                    <td>@t.Text</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger"
+                                @onclick="() => OnDelete.InvokeAsync(t)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public List<Tactic> Tactics { get; set; } = new();
+
+    [Parameter] public string NewTacticText { get; set; } = "";
+    [Parameter] public EventCallback<string> NewTacticTextChanged { get; set; }
+
+    [Parameter] public TacticIntent NewTacticIntent { get; set; } = TacticIntent.Improve;
+    [Parameter] public EventCallback<TacticIntent> NewTacticIntentChanged { get; set; }
+
+    [Parameter] public EventCallback OnAdd { get; set; }
+    [Parameter] public EventCallback<Tactic> OnDelete { get; set; }
+
+    private Task HandleTextInput(ChangeEventArgs e)
+        => NewTacticTextChanged.InvokeAsync(e.Value?.ToString() ?? "");
+
+    private Task HandleIntentChange(ChangeEventArgs e)
+    {
+        var raw = e.Value?.ToString();
+        var parsed = Enum.TryParse<TacticIntent>(raw, out var v) ? v : TacticIntent.Improve;
+        return NewTacticIntentChanged.InvokeAsync(parsed);
+    }
+}

@@ -10,12 +10,7 @@
 }
 else
 {
-    <div style="max-width:900px;">
-
-        <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
-            <button class="btn btn-sm btn-primary" @onclick="SaveHabit">Save</button>
-            <span>@saveStatus</span>
-        </div>
+    <div class="habit-details-wrap">
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -56,162 +51,51 @@ else
         </ul>
 
         <div class="tab-content border border-top-0 p-3">
-
-            @* TAB 1: BASE *@
             @if (activeTab == Tab.Base)
             {
-                <h3 class="mt-0">Base</h3>
-
-                <div style="display:flex; flex-direction:column; gap:12px;">
-
-                    <div>
-                        <label><b>Name</b> (max 80)</label><br />
-                        <input @bind="habit.Name" maxlength="80" style="width:100%;" />
-                    </div>
-
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <label><b>Good</b></label>
-                        <input type="checkbox" @bind="habit.Good" />
-                    </div>
-
-                    <div>
-                        <label><b>Description</b> (max 240)</label><br />
-                        <textarea @bind="habit.Description" maxlength="240" rows="4" style="width:100%;"></textarea>
-                    </div>
-
-                </div>
+                <HabitBaseTab Habit="habit" />
             }
-
-            @* TAB 2: ENVIRONMENT *@
             else if (activeTab == Tab.Environment)
             {
-                <h3 class="mt-0">Environment</h3>
-
-                <div style="display:flex; flex-direction:column; gap:12px;">
-
-                    <div>
-                        <label><b>Trigger</b> (max 240)</label><br />
-                        <input @bind="habit.Trigger" maxlength="240" style="width:100%;" />
-                    </div>
-
-                    <div>
-                        <label><b>Environment</b> (max 400)</label><br />
-                        <textarea @bind="habit.Environment" maxlength="400" rows="4" style="width:100%;"></textarea>
-                    </div>
-
-                </div>
+                <HabitEnvironmentTab Habit="habit" />
             }
-
-            @* TAB 3: NOTES *@
             else if (activeTab == Tab.Notes)
             {
-                <h3 class="mt-0">Notes</h3>
-
-                <div>
-                    <label><b>Notes</b> (max 800)</label><br />
-                    <textarea @bind="habit.Notes" maxlength="800" rows="10" style="width:100%;"></textarea>
-                </div>
+                <HabitNotesTab Habit="habit" />
             }
-
-            @* TAB 4: TACTICS *@
             else if (activeTab == Tab.Tactics)
             {
-                <h3 class="mt-0">Tactics</h3>
-
-                <div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:12px;">
-                    <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
-                        <label>Text (max 240)</label>
-                        <input @bind="newTacticText" maxlength="240" style="width:100%;" />
-                    </div>
-
-                    <div style="display:flex; flex-direction:column; gap:6px;">
-                        <label>Intent</label>
-                        <select @bind="newTacticIntent">
-                            <option value="@TacticIntent.Improve">Improve</option>
-                            <option value="@TacticIntent.Reinforce">Reinforce</option>
-                            <option value="@TacticIntent.Reduce">Reduce</option>
-                        </select>
-                    </div>
-
-                    <button class="btn btn-sm btn-secondary" @onclick="AddTactic">Add</button>
-                </div>
-
-                @if (tactics.Count == 0)
-                {
-                    <p>No tactics yet.</p>
-                }
-                else
-                {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th style="width:140px;">Intent</th>
-                                <th>Text</th>
-                                <th style="width:140px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var t in tactics)
-                            {
-                                <tr>
-                                    <td>@t.Intent</td>
-                                    <td>@t.Text</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteTactic(t)">Delete</button>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
+                <HabitTacticsTab Tactics="tactics"
+                                 NewTacticText="newTacticText"
+                                 NewTacticTextChanged="OnNewTacticTextChanged"
+                                 NewTacticIntent="newTacticIntent"
+                                 NewTacticIntentChanged="OnNewTacticIntentChanged"
+                                 OnAdd="AddTactic"
+                                 OnDelete="DeleteTactic" />
             }
-
-            @* TAB 5: IMPROVE (Continual Improvements) *@
             else if (activeTab == Tab.Improve)
             {
-                <h3 class="mt-0">Improve</h3>
-
-                <div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:12px;">
-                    <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
-                        <label>Idea / Thought (max 800)</label>
-                        <input @bind="newCIText" maxlength="800" style="width:100%;" />
-                    </div>
-
-                    <button class="btn btn-sm btn-secondary" @onclick="AddCI">Add</button>
-                </div>
-
-                @if (ciItems.Count == 0)
-                {
-                    <p>No ideas yet.</p>
-                }
-                else
-                {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th style="width:220px;">Created</th>
-                                <th>Text</th>
-                                <th style="width:140px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var c in ciItems)
-                            {
-                                <tr>
-                                    <td>@c.CreatedOn.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-                                    <td>@c.Text</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteCI(c)">Delete</button>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
+                <HabitImproveTab Items="ciItems"
+                                 NewText="newCIText"
+                                 NewTextChanged="OnNewCITextChanged"
+                                 OnAdd="AddCI"
+                                 OnDelete="DeleteCI" />
             }
-
         </div>
+
+        <div class="habit-actionbar">
+            <span>@saveStatus</span>
+
+            <div class="actions">
+                <button class="btn btn-secondary" @onclick="SaveAndExit">Save & Exit</button>
+                <button class="btn btn-primary" @onclick="SaveHabit">Save</button>
+            </div>
+        </div>
+
     </div>
+
+
+
 }
 
 @code {
@@ -270,6 +154,36 @@ else
         saveStatus = "Saved.";
         await Task.Delay(700);
         saveStatus = "";
+    }
+
+    [Inject] NavigationManager Nav { get; set; } = default!;
+
+    private async Task SaveAndExit()
+    {
+        await SaveHabit();
+        if (habit is not null)
+            Nav.NavigateTo($"/routines/{habit.RoutineId}");
+    }
+
+
+
+    // These small wrappers avoid Razor attribute parsing weirdness with lambdas in markup
+    private Task OnNewTacticTextChanged(string v)
+    {
+        newTacticText = v;
+        return Task.CompletedTask;
+    }
+
+    private Task OnNewTacticIntentChanged(TacticIntent v)
+    {
+        newTacticIntent = v;
+        return Task.CompletedTask;
+    }
+
+    private Task OnNewCITextChanged(string v)
+    {
+        newCIText = v;
+        return Task.CompletedTask;
     }
 
     private async Task AddTactic()

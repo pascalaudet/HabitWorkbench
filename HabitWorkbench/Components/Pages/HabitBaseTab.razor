@@ -1,0 +1,46 @@
+﻿@using HabitWorkbench.Data.Models
+
+@if (Habit is null)
+{
+    <p>Loading…</p>
+    return;
+}
+
+<h3 class="mt-0">Base</h3>
+
+<div style="display:flex; flex-direction:column; gap:12px;">
+
+    <div>
+        <label><b>Name</b> (max 80)</label><br />
+        <input @bind="Habit.Name" maxlength="80" style="width:100%;" />
+    </div>
+
+
+    <div class="base-row-2col">
+        <div class="base-good">
+            <label><b>Good</b></label>
+            <div class="base-good-box">
+                <input type="checkbox" @bind="Habit.Good" class="habit-checkbox" />
+            </div>
+        </div>
+
+        <div class="base-state">
+            <label><b>Implementation State</b></label>
+            <select @bind="Habit.ImplementationState" class="base-select">
+                <option value="@HabitImplementationState.Active">Active</option>
+                <option value="@HabitImplementationState.Desired">Desired</option>
+                <option value="@HabitImplementationState.Archived">Archived</option>
+            </select>
+        </div>
+    </div>
+
+    <div>
+        <label><b>Description</b> (max 240)</label><br />
+        <textarea @bind="Habit.Description" maxlength="240" rows="4" style="width:100%;"></textarea>
+    </div>
+
+</div>
+
+@code {
+    [Parameter] public Habit? Habit { get; set; }
+}

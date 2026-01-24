@@ -1,0 +1,18 @@
+﻿@using HabitWorkbench.Data.Models
+
+@if (Habit is null)
+{
+    <p>Loading…</p>
+    return;
+}
+
+<h3 class="mt-0">Notes</h3>
+
+<div>
+    <label><b>Notes</b> (max 800)</label><br />
+    <textarea @bind="Habit.Notes" maxlength="800" rows="10" style="width:100%;"></textarea>
+</div>
+
+@code {
+    [Parameter] public Habit? Habit { get; set; }
+}

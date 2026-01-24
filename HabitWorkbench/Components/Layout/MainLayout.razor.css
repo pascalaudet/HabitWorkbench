@@ -36,6 +36,19 @@ main {
         text-overflow: ellipsis;
     }
 
+    .habit-checkbox {
+        width: 20px;
+        height: 20px;
+        transform: scale(1.4);
+        transform-origin: top left;
+        cursor: pointer;
+    }
+
+
+
+
+
+
 @media (max-width: 640.98px) {
     .top-row {
         justify-content: space-between;
