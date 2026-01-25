@@ -15,18 +15,15 @@ namespace HabitWorkbench.Services
     {
         private readonly UpdateManager _um;
         private int _started;
-
-        // TODO: set these
-        //private const string RepoUrl = "https://github.com/pascalaudet/HabitWorkbench";
-        private const string RepoUrl = "pascalaudet/HabitWorkbench";
+        private const string RepoUrl = "https://github.com/pascalaudet/HabitWorkbench";
         private const bool IncludePrereleases = false;
 
         public AppUpdateService()
         {
-            // GitHub Releases as update source (free for OSS)
-            var source = new GithubSource(RepoUrl, accessToken: null, prerelease: IncludePrereleases);
+            var source = new GithubSource(RepoUrl, accessToken: "", prerelease: IncludePrereleases);
             _um = new UpdateManager(source);
         }
+
 
         /// <summary>
         /// Call once on startup. Safe to call repeatedly; it will only run once.
