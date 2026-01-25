@@ -22,6 +22,8 @@ namespace HabitWorkbench
 #endif
 
             builder.Services.AddSingleton<HabitWorkbench.Data.AppDb>();
+            builder.Services.AddSingleton<HabitWorkbench.Services.UiContextService>();
+            builder.Services.AddSingleton<HabitWorkbench.Services.AppUpdateService>();
 
 
             return builder.Build();
