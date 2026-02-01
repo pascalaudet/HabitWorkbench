@@ -37,6 +37,9 @@ namespace HabitWorkbench
             builder.Services.AddSingleton<HabitWorkbench.Data.AppDb>();
             builder.Services.AddSingleton<HabitWorkbench.Services.UiContextService>();
             builder.Services.AddSingleton<HabitWorkbench.Services.AppUpdateService>();
+            builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<StartupPage>();
+
 
             return builder.Build();
         }

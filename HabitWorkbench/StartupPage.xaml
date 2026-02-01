@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HabitWorkbench.StartupPage">
+
+    <VerticalStackLayout Padding="24" Spacing="14" VerticalOptions="Center">
+        <ActivityIndicator IsRunning="True" />
+        <Label Text="Starting HabitWorkbench..." HorizontalTextAlignment="Center" />
+        <Label x:Name="statusLabel" Text="" FontSize="12" Opacity="0.8" HorizontalTextAlignment="Center" />
+    </VerticalStackLayout>
+
+</ContentPage>

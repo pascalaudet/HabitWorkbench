@@ -80,9 +80,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Layout already calls Db.InitAsync(), but calling it again is safe and keeps this page robust.
-        await Db.InitAsync();
-        await Reload();
+       await Reload();
     }
 
     private async Task Reload()

@@ -5,23 +5,24 @@ namespace HabitWorkbench
     public partial class App : Application
     {
         private readonly AppUpdateService _updates;
+        private readonly IServiceProvider _services;
 
-        public App(AppUpdateService updates)
+        public App(AppUpdateService updates, IServiceProvider services)
         {
             InitializeComponent();
             _updates = updates;
+            _services = services;
 
-            // Start silent check/download early
             _updates.StartBackgroundCheck();
 
-            MainPage = new MainPage();
+            //  Option A: init DB BEFORE Blazor loads
+            MainPage = _services.GetRequiredService<StartupPage>();
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
             var window = base.CreateWindow(activationState);
 
-            // Apply update when the app/window is closing
             window.Destroying += (_, __) =>
             {
                 _updates.ApplyIfPendingRestart();
